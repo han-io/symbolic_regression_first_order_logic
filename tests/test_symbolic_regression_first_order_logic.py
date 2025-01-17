@@ -11,7 +11,7 @@ class TestSymbolicRegressionFol(unittest.TestCase):
         assign_matrix = FormulaAssignment(expr, 2).matrix
         result_scores = []
         for _ in range(100):
-            result_expr = best_expression(assign_matrix)
+            result_expr = best_expression(assign_matrix, verbose=True)
             result_scores.append(result_expr.score(assign_matrix))
         self.assertGreater(sum(result_scores)/float(len(result_scores)), 0.95)
 
