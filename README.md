@@ -28,14 +28,14 @@ pip install requirements.txt
 ### python package
 ```python
 from pandas import DataFrame
-from symbolic_regession_first_order_logic import best_expression
+from symbolic_regression_first_order_logic.src.sr_fol import best_expression
 
 data = {'v_1':[True, True, False, False], 
         'v_2':[True, False, True, False],
         'e'  :[True, False, True, True]}
 df = DataFrame.from_dict(data)
 
-best_expression(df)
+best_expression(df)  # This returns a logical expression
 ```
 #### with options
 ```python
@@ -50,9 +50,11 @@ best_expression(input_df,
 ### console
 Use --input_df argument to point to pickled DataFrame
 ```bash
-python .\symbolic_regression_first_order_logic.py --input_df a.pkl
+cd .\symbolic_regression_first_order_logic\src\
+python -m sr_fol --input_df_path input.pkl
 ```
 #### with options
 ```bash
-python .\symbolic_regression_first_order_logic.py --input_df a.pkl --populations 31 --population_size 27 --maxdepth 10 --niteration 100 --verbose
+...
+python -m sr_fol --input_df input.pkl --populations 31 --population_size 27 --maxdepth 10 --niteration 100 --verbose
 ```

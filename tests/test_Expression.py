@@ -1,6 +1,6 @@
 import unittest
-from Expression import Expression, Var, Not, Or, And, RandomExpression
-from Assignment import FormulaAssignment
+from src.sr_fol.Expression import Expression, Var, Not, Or, And, RandomExpression
+from src.sr_fol.Assignment import FormulaAssignment
 
 
 class TestExpression(unittest.TestCase):
