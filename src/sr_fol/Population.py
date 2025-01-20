@@ -9,22 +9,31 @@ class Population:
     remove the worst performing expressions and repopulate through changes.
     """
 
-    def __init__(self, population_size: int, v_n: int, maxdepth: int) -> None:
+    def __init__(self,
+                 population_size: int,
+                 v_n: int,
+                 maxdepth: int,
+                 binary_operators: tuple[type[Expression], ...],
+                 unary_operators: tuple[type[Expression], ...]) -> None:
         """
         Initialize a Population with population_size of random expressions.
 
         :param population_size: target amount of expressions in a population
         :param v_n: number of variables
         :param maxdepth: maximum depth of the expressions in the population
+        :param binary_operators: only use these binary operators
+        :param unary_operators: only use these unary operators
         """
         self.population_size = population_size
         self.v_n = v_n
         self.maxdepth = maxdepth
+        self.binary_operators = binary_operators
+        self.unary_operators = unary_operators
         self.expressions = []
         populating_tries = 500
         while len(self.expressions) < population_size and populating_tries > 0:
             populating_tries -= 1
-            expression = RandomExpression(v_n, maxdepth)
+            expression = RandomExpression(v_n, binary_operators, unary_operators, maxdepth)
             if expression not in self.expressions:
                 self.expressions.append(expression)
 
@@ -67,12 +76,21 @@ class Population:
 
             # for small expression containing only a single variable, nodes above are added
             if mutant_expression.size() < 2:
-                mutant_expression = mutant_expression.new_parent(RandomExpression(self.v_n, maxdepth=mutation_maxdepth))
+                random_expression = RandomExpression(self.v_n,
+                                                     self.binary_operators,
+                                                     self.unary_operators,
+                                                     mutation_maxdepth)
+                mutant_expression = mutant_expression.new_parent(random_expression,
+                                                                 list(self.binary_operators) + list(self.unary_operators))
 
             # for larger expressions randomize an argument in the expression
             else:
-                branch_node = sample(mutant_expression.nodes(('Not', 'Or', 'And')), k=1).pop()
-                branch_node.set_child(RandomExpression(self.v_n, maxdepth=mutation_maxdepth))
+                branch_node = sample(mutant_expression.nodes(list(self.binary_operators) + list(self.unary_operators)),
+                                     k=1).pop()
+                branch_node.set_child(RandomExpression(self.v_n,
+                                                       self.binary_operators,
+                                                       self.unary_operators,
+                                                       mutation_maxdepth))
 
             if mutant_expression not in self.expressions:
                 self.expressions.append(mutant_expression)
@@ -93,18 +111,21 @@ class Population:
             if crossover_expression.size() < 2:
                 guest_expression = sample(guest_population.expressions, k=1).pop().copy()
                 if guest_expression.size() < 2:
-                    crossover_expression.new_parent(guest_expression, node_types=('Or', 'And'))
+                    crossover_expression.new_parent(guest_expression,
+                                                    list(self.binary_operators) + list(self.unary_operators))
                 else:
-                    guest_branch_node = sample(guest_expression.nodes(('Not', 'Or', 'And')), k=1).pop()
+                    guest_branch_nodes = guest_expression.nodes(list(self.binary_operators) + list(self.unary_operators))
+                    guest_branch_node = sample(guest_branch_nodes, k=1).pop()
                     guest_branch_node.set_child(crossover_expression)
                     crossover_expression = guest_branch_node
 
             # for larger expressions take a random node from the guest expression and place it as a random branch
             else:
                 guest_expression = sample(guest_population.expressions, k=1).pop()
-                guest_subexpression = sample(guest_expression.nodes(), k=1).pop().copy()
+                guest_subexpression = sample(guest_expression.nodes([]), k=1).pop().copy()
 
-                branch_node = sample(crossover_expression.nodes(('Not', 'Or', 'And')), k=1).pop()
+                branch_nodes = crossover_expression.nodes(list(self.binary_operators) + list(self.unary_operators))
+                branch_node = sample(branch_nodes, k=1).pop()
                 branch_node.set_child(guest_subexpression)
 
             if crossover_expression not in self.expressions and crossover_expression.depth() <= self.maxdepth:

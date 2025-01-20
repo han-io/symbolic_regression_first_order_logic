@@ -22,13 +22,15 @@ pip install requirements.txt
 **populations:** number of populations used in the genetic algorithm  
 **population_size:** number of individual expressions per population  
 **maxdepth:** maximum depth of the expressions in the populations  
-**niterations:** number of generations of mutation and crossover  
+**niterations:** number of generations of mutation and crossover 
+**binary_operators:** only use these binary operators 
+**unary_operators:** only use these unary operators
 **verbose:** output more info to sdtout
 
 ### python package
 ```python
 from pandas import DataFrame
-from symbolic_regression_first_order_logic.src.sr_fol import best_expression
+from symbolic_regression_first_order_logic.src.sr_fol import best_expression, Not, Or, And, Nand, Xor, Implies, Converse
 
 data = {'v_1':[True, True, False, False], 
         'v_2':[True, False, True, False],
@@ -44,7 +46,9 @@ best_expression(input_df,
                 populations=31, 
                 population_size=27, 
                 maxdepth=10, 
-                niterations=100, 
+                niterations=100,
+                binary_operators=(Or, And, Nand, Xor, Implies, Converse),
+                unary_operators=(Not,),
                 verbose=False)
 ```
 ### console
@@ -56,5 +60,5 @@ python -m sr_fol --input_df_path input.pkl
 #### with options
 ```bash
 ...
-python -m sr_fol --input_df input.pkl --populations 31 --population_size 27 --maxdepth 10 --niteration 100 --verbose
+python -m sr_fol --input_df input.pkl --populations 31 --population_size 27 --maxdepth 10 --niteration 100 --binary_operators all_or_and_nand_xor_implies_converse --unary_operators all_not --verbose
 ```

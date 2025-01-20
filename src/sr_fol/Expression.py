@@ -57,7 +57,7 @@ class Expression:
         else:
             return max(self.arg_1.depth(), self.arg_2.depth()) + 1
 
-    def nodes(self, node_types: tuple[str, ...] = ()) -> list['Expression']:
+    def nodes(self, node_types: list[type['Expression'], ...]) -> list['Expression']:
         """
         Get a list of all specified node types in an expression.
         If no node types are specified return all nodes.
@@ -66,7 +66,7 @@ class Expression:
         :return: all nodes of specified type
         """
         nodes = []
-        if node_types == () or self.__class__.__name__ in node_types:
+        if not node_types or self.__class__ in node_types:
             nodes.append(self)
         if self.arg_2 is not None:
             nodes = nodes + self.arg_1.nodes(node_types) + self.arg_2.nodes(node_types)
@@ -90,7 +90,7 @@ class Expression:
 
     def new_parent(self,
                    sibling_expression: 'Expression',
-                   node_types: tuple[str, ...] = ('Not', 'Or', 'And')) -> 'Expression':
+                   node_types: list[type['Expression'], ...]) -> 'Expression':
         """
         Expand this expression with a node randomly chosen from node_types above this expression.
         Use sibling_expression as the second argument of the parent node if necessary.
@@ -99,21 +99,17 @@ class Expression:
         :param node_types: allowed types for the parent node
         :return: parent node
         """
-        node_type = sample(node_types, k=1).pop()
-        if node_type == 'Not':
-            return Not(self)
-        elif node_type == 'Or':
-            return Or(self, sibling_expression)
-        elif node_type == 'And':
-            return And(self, sibling_expression)
+        node_class = sample(node_types, k=1).pop()
+        if node_class.arity() == 1:
+            return node_class(self)
+        elif node_class.arity() == 2:
+            return node_class(self, sibling_expression)
         else:
             return self
 
 
 class Var(Expression):
-    """
-    Class to fulfill the role of a variable in first-order-logic.
-    """
+    """ Class to fulfill the role of a variable in first-order-logic. """
 
     def __init__(self, subscript: int) -> None:
         self.subscript = subscript
@@ -142,6 +138,15 @@ class Var(Expression):
         if eval_variable is None:
             return None
         return assignment['v_' + str(self.subscript)]
+
+    @staticmethod
+    def arity() -> int:
+        """
+        Return arity of this expression.
+
+        :return: number of direct child nodes
+        """
+        return 0
 
 
 class Not(Expression):
@@ -173,11 +178,18 @@ class Not(Expression):
             return None
         return not self.arg_1.evaluate(assignment)
 
+    @staticmethod
+    def arity() -> int:
+        """
+        Return arity of this expression.
+
+        :return: number of direct child nodes
+        """
+        return 1
+
 
 class Or(Expression):
-    """
-    Class to fulfill the role of the 'or' operator in first-order-logic.
-    """
+    """ Class to fulfill the role of the 'or' operator in first-order-logic. """
 
     def __str__(self) -> str:
         return '(' + str(self.arg_1) + ') or (' + str(self.arg_2) + ')'
@@ -204,11 +216,18 @@ class Or(Expression):
             return None
         return eval_arg_1 or eval_arg_2
 
+    @staticmethod
+    def arity() -> int:
+        """
+        Return arity of this expression.
+
+        :return: number of direct child nodes
+        """
+        return 2
+
 
 class And(Expression):
-    """
-    Class to fulfill the role of the 'and' operator in first-order-logic.
-    """
+    """ Class to fulfill the role of the 'and' operator in first-order-logic. """
 
     def __str__(self) -> str:
         return '(' + str(self.arg_1) + ') and (' + str(self.arg_2) + ')'
@@ -235,25 +254,193 @@ class And(Expression):
             return None
         return eval_arg_1 and eval_arg_2
 
+    @staticmethod
+    def arity() -> int:
+        """
+        Return arity of this expression.
+
+        :return: number of direct child nodes
+        """
+        return 2
+
+
+class Nand(Expression):
+    """ Class to fulfill the role of the 'nand' operator in first-order-logic. """
+
+    def __str__(self) -> str:
+        return '(' + str(self.arg_1) + ') nand (' + str(self.arg_2) + ')'
+
+    def copy(self) -> 'Nand':
+        """
+        Create a copy of this node and recursively copy the expression tree below this node.
+        This generates a logically equivalent expression composed of entirely different instances.
+
+        :return: deep copied expression
+        """
+        return Nand(arg_1=self.arg_1.copy(), arg_2=self.arg_2.copy())
+
+    def evaluate(self, assignment: Series) -> bool | None:
+        """
+        Evaluate the logical value of this expression by recursively evaluating its arguments.
+
+        :param assignment: values for variables
+        :return: evaluation of expression
+        """
+        eval_arg_1 = self.arg_1.evaluate(assignment)
+        eval_arg_2 = self.arg_2.evaluate(assignment)
+        if eval_arg_1 is None or eval_arg_2 is None:
+            return None
+        return not (eval_arg_1 and eval_arg_2)
+
+    @staticmethod
+    def arity() -> int:
+        """
+        Return arity of this expression.
+
+        :return: number of direct child nodes
+        """
+        return 2
+
+
+class Xor(Expression):
+    """ Class to fulfill the role of the 'xor' operator in first-order-logic. """
+
+    def __str__(self) -> str:
+        return '(' + str(self.arg_1) + ') xor (' + str(self.arg_2) + ')'
+
+    def copy(self) -> 'Xor':
+        """
+        Create a copy of this node and recursively copy the expression tree below this node.
+        This generates a logically equivalent expression composed of entirely different instances.
+
+        :return: deep copied expression
+        """
+        return Xor(arg_1=self.arg_1.copy(), arg_2=self.arg_2.copy())
+
+    def evaluate(self, assignment: Series) -> bool | None:
+        """
+        Evaluate the logical value of this expression by recursively evaluating its arguments.
+
+        :param assignment: values for variables
+        :return: evaluation of expression
+        """
+        eval_arg_1 = self.arg_1.evaluate(assignment)
+        eval_arg_2 = self.arg_2.evaluate(assignment)
+        if eval_arg_1 is None or eval_arg_2 is None:
+            return None
+        return (eval_arg_1 and not eval_arg_2) or (not eval_arg_1 and eval_arg_2)
+
+    @staticmethod
+    def arity() -> int:
+        """
+        Return arity of this expression.
+
+        :return: number of direct child nodes
+        """
+        return 2
+
+
+class Implies(Expression):
+    """ Class to fulfill the role of the 'implication' operator in first-order-logic. """
+
+    def __str__(self) -> str:
+        return '(' + str(self.arg_1) + ') -> (' + str(self.arg_2) + ')'
+
+    def copy(self) -> 'Implies':
+        """
+        Create a copy of this node and recursively copy the expression tree below this node.
+        This generates a logically equivalent expression composed of entirely different instances.
+
+        :return: deep copied expression
+        """
+        return Implies(arg_1=self.arg_1.copy(), arg_2=self.arg_2.copy())
+
+    def evaluate(self, assignment: Series) -> bool | None:
+        """
+        Evaluate the logical value of this expression by recursively evaluating its arguments.
+
+        :param assignment: values for variables
+        :return: evaluation of expression
+        """
+        eval_arg_1 = self.arg_1.evaluate(assignment)
+        eval_arg_2 = self.arg_2.evaluate(assignment)
+        if eval_arg_1 is None or eval_arg_2 is None:
+            return None
+        return not eval_arg_1 or eval_arg_2
+
+    @staticmethod
+    def arity() -> int:
+        """
+        Return arity of this expression.
+
+        :return: number of direct child nodes
+        """
+        return 2
+
+
+class Converse(Expression):
+    """ Class to fulfill the role of the 'implicational converse' operator in first-order-logic. """
+
+    def __str__(self) -> str:
+        return '(' + str(self.arg_1) + ') <- (' + str(self.arg_2) + ')'
+
+    def copy(self) -> 'Converse':
+        """
+        Create a copy of this node and recursively copy the expression tree below this node.
+        This generates a logically equivalent expression composed of entirely different instances.
+
+        :return: deep copied expression
+        """
+        return Converse(arg_1=self.arg_1.copy(), arg_2=self.arg_2.copy())
+
+    def evaluate(self, assignment: Series) -> bool | None:
+        """
+        Evaluate the logical value of this expression by recursively evaluating its arguments.
+
+        :param assignment: values for variables
+        :return: evaluation of expression
+        """
+        eval_arg_1 = self.arg_1.evaluate(assignment)
+        eval_arg_2 = self.arg_2.evaluate(assignment)
+        if eval_arg_1 is None or eval_arg_2 is None:
+            return None
+        return eval_arg_1 or not eval_arg_2
+
+    @staticmethod
+    def arity() -> int:
+        """
+        Return arity of this expression.
+
+        :return: number of direct child nodes
+        """
+        return 2
+
 
 class RandomExpression(Expression):
 
-    def __new__(cls, v_n: int, maxdepth: int = 10) -> Expression:
+    def __new__(cls,
+                v_n: int,
+                binary_operators: tuple[type[Expression], ...]  = (Or, And),
+                unary_operators: tuple[type[Expression], ...] = (Not,),
+                maxdepth: int = 10) -> Expression:
         """
         Generate a random Expression.
 
         :param v_n: number of variables
         :param maxdepth: maximum depth of the expression
+        :param binary_operators: only use these binary operators
+        :param unary_operators: only use these unary operators
+        :return: new random expression
         """
-        node_options = [i + 1 for i in range(v_n)]
+        node_options = [Var]  # increase the probability of a variable
         if maxdepth > 0:
-            node_options += ['Not', 'Or', 'And']
+            node_options += list(binary_operators) + list(unary_operators)
         node_type = sample(node_options, k=1).pop()
-        if node_type == 'Not':
-            return Not(RandomExpression(v_n, maxdepth-1))
-        elif node_type == 'Or':
-            return Or(RandomExpression(v_n, maxdepth-1), RandomExpression(v_n, maxdepth-1))
-        elif node_type == 'And':
-            return And(RandomExpression(v_n, maxdepth-1), RandomExpression(v_n, maxdepth-1))
+
+        if node_type.arity() == 1:
+            return node_type(RandomExpression(v_n, binary_operators, unary_operators, maxdepth-1))
+        elif node_type.arity() == 2:
+            return node_type(RandomExpression(v_n, binary_operators, unary_operators, maxdepth-1),
+                             RandomExpression(v_n, binary_operators, unary_operators, maxdepth-1))
         else:
-            return Var(node_type)
+            return node_type(sample(range(1, v_n+1), k=1).pop())
