@@ -22,9 +22,9 @@ pip install requirements.txt
 **populations:** number of populations used in the genetic algorithm  
 **population_size:** number of individual expressions per population  
 **maxdepth:** maximum depth of the expressions in the populations  
-**niterations:** number of generations of mutation and crossover 
-**binary_operators:** only use these binary operators 
-**unary_operators:** only use these unary operators
+**niterations:** number of generations of mutation and crossover  
+**binary_operators:** only use these binary operators  
+**unary_operators:** only use these unary operators  
 **verbose:** output more info to sdtout
 
 ### python package
