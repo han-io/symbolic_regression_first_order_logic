@@ -1,8 +1,8 @@
 import unittest
 from pandas import DataFrame
 from numpy import concatenate
-from src.sr_fol.Expression import Var, Not, Or, And
-from src.sr_fol.Assignment import Assignment, RandomAssignment, FormulaAssignment
+from sr_fol.Expression import Var, Not, Or, And
+from sr_fol.Assignment import Assignment, RandomAssignment, FormulaAssignment
 
 
 class TestAssignment(unittest.TestCase):

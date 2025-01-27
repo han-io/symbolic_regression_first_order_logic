@@ -1,6 +1,6 @@
 from random import sample
 from pandas import DataFrame
-from .Expression import Expression, RandomExpression
+from sr_fol.Expression import Expression, RandomExpression
 
 
 class Population:

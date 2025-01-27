@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <link rel="stylesheet" href="https://pyscript.net/releases/2024.11.1/core.css">
+  <script type="module" src="https://pyscript.net/releases/2024.11.1/core.js"></script>
+  <link rel="stylesheet" href="style.css"/>
+  <title id="header-title">Symbolic Regression on First Order Logic</title>
+  <link rel="icon" type="image/png" href="./favicon.png"/>
+</head>
+<body>
+  <h1 id="headline"> Welcome to Symbolic Regression on First Order Logic </h1>
+  <section id="explanation" class="container">
+    <div id="text">
+      <h3>Motivation</h3>
+      <p> Imagine you hold in your hand a little black box. One of its sides has a number of flip switches,
+          the other has a single LED light. You flick some switches and discover that the light on the backside
+          sometimes turns on, off or stays as it were. You wonder "How could one reliably predict which
+          configuration of switches would light the LED and which would not?"
+          Well, since the switches as well as the light are in one of two distinct states, this problem can
+          be described in terms of first order logic. Thus, a logical expression can be found that represents
+          the relationship between the switches and the light. This would help us predict switch arrangements
+          we have not seen before. </p>
+      <h3>Introduction</h3>
+      <p> This is the online application for symbolic regression on first order logic. It provides a logical
+          expression for the variable assignments and evaluation results in the table below. Variables are
+          named "v" and distinguished via subscript in this manner v<sub>1</sub>, v<sub>2</sub>, ..., v<sub>n</sub>.
+          Assignments map binary values to variables. They are named "a" and also have a subscript like this
+          a<sub>1</sub>, a<sub>2</sub>, ..., a<sub>m</sub>. An evaluation is the value of an expression after
+          the variables have been assigned. Its shorthand in this context is "e".</p>
+
+    </div>
+    <div id="example">
+      <p>Here is an input example:</p>
+      e = v<sub>1</sub> and v<sub>2</sub>
+      <table>
+        <tr>
+          <th>v<sub>1</sub></th>
+          <td>True</td>
+          <td>True</td>
+          <td>False</td>
+          <td>False</td>
+        </tr>
+        <tr>
+          <th>v<sub>2</sub></th>
+          <td>True</td>
+          <td>False</td>
+          <td>True</td>
+          <td>False</td>
+        </tr>
+        <tr>
+          <th>e</th>
+          <td>True</td>
+          <td>False</td>
+          <td>False</td>
+          <td>False</td>
+        </tr>
+        <tr>
+          <th></th>
+          <th>a<sub>1</sub></th>
+          <th>a<sub>2</sub></th>
+          <th>a<sub>3</sub></th>
+          <th>a<sub>4</sub></th>
+        </tr>
+      </table>
+    </div>
+  </section>
+
+  <section class="container">
+    <h2>Try it!</h2>
+    <div id="input">
+      <div id="options">
+        <div id="number-of-variables-text">Number of variables:</div>
+        <input type="number" id="number-of-variables" name="number-of-variables" value="2" min="1" max="14" py-change="change_number"/>
+        <div id="number-of-assignments-text">Number of assignments:</div>
+        <input type="number" id="number-of-assignments" name="number-of-assignments" value="4" min="1" max="140" py-change="change_number"/>
+        <div><input type="checkbox" id="not" name="not" checked /><label for="not">not</label></div>
+        <div><input type="checkbox" id="or" name="or" checked /><label for="or">or</label></div>
+        <div><input type="checkbox" id="and" name="and" checked /><label for="and">and</label></div>
+        <div><input type="checkbox" id="implies" name="implies"/><label for="implies">implies</label></div>
+        <div></div>
+        <div><input type="checkbox" id="xor" name="xor"/><label for="xor">xor</label></div>
+        <div><input type="checkbox" id="nand" name="nand"/><label for="nand">nand</label></div>
+        <div><input type="checkbox" id="converse" name="converse"/><label for="converse">converse</label></div>
+      </div>
+        <div id="table-overflow">
+          <table id="input-table">
+            <tr><th>Loading ...</th></tr>
+          </table>
+        </div>
+    </div>
+  </section>
+
+  <section id="start-sec" class="container">
+    <button id="button" py-click="find_expression">Find expression!</button>
+  </section>
+
+  <section id="output" class="container">
+  </section>
+
+  <script type="py" src="_pyscript.py" config="./pyscript.toml"></script>
+</body>
+</html>

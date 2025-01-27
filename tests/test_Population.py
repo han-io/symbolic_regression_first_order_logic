@@ -1,7 +1,7 @@
 import unittest
-from src.sr_fol.Expression import Var, Not, Or, And
-from src.sr_fol.Population import Population
-from src.sr_fol.Assignment import FormulaAssignment
+from sr_fol.Expression import Var, Not, Or, And
+from sr_fol.Population import Population
+from sr_fol.Assignment import FormulaAssignment
 
 
 class TestPopulation(unittest.TestCase):

@@ -3,14 +3,13 @@ For a matrix of variable assignments (a_1, ..., a_n) and associated evaluations 
 first-order-logic expression that validates the most pairs (a_1, e_1), ..., (a_n, e_n).
 """
 from typing import List, Type, Any
-
 from pandas import DataFrame
 from random import sample
 from argparse import ArgumentParser
 from pickle import load
-from .Expression import Expression, Not, Or, And#, Nand, Xor, Implies, Converse
-from .Population import Population
-from .Assignment import Assignment
+from sr_fol.Expression import Expression, Not, Or, And, Nand, Xor, Implies, Converse
+from sr_fol.Population import Population
+from sr_fol.Assignment import Assignment
 
 
 def best_expression(input_df: DataFrame,

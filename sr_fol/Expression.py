@@ -213,7 +213,10 @@ class Or(Expression):
         eval_arg_1 = self.arg_1.evaluate(assignment)
         eval_arg_2 = self.arg_2.evaluate(assignment)
         if eval_arg_1 is None or eval_arg_2 is None:
-            return None
+            if eval_arg_1 is True or eval_arg_2 is True:
+                return True
+            else:
+                return None
         return eval_arg_1 or eval_arg_2
 
     @staticmethod
@@ -251,7 +254,10 @@ class And(Expression):
         eval_arg_1 = self.arg_1.evaluate(assignment)
         eval_arg_2 = self.arg_2.evaluate(assignment)
         if eval_arg_1 is None or eval_arg_2 is None:
-            return None
+            if eval_arg_1 is False or eval_arg_2 is False:
+                return False
+            else:
+                return None
         return eval_arg_1 and eval_arg_2
 
     @staticmethod
@@ -289,7 +295,10 @@ class Nand(Expression):
         eval_arg_1 = self.arg_1.evaluate(assignment)
         eval_arg_2 = self.arg_2.evaluate(assignment)
         if eval_arg_1 is None or eval_arg_2 is None:
-            return None
+            if eval_arg_1 is False or eval_arg_2 is False:
+                return True
+            else:
+                return None
         return not (eval_arg_1 and eval_arg_2)
 
     @staticmethod
@@ -365,7 +374,10 @@ class Implies(Expression):
         eval_arg_1 = self.arg_1.evaluate(assignment)
         eval_arg_2 = self.arg_2.evaluate(assignment)
         if eval_arg_1 is None or eval_arg_2 is None:
-            return None
+            if eval_arg_1 is False or eval_arg_2 is True:
+                return True
+            else:
+                return None
         return not eval_arg_1 or eval_arg_2
 
     @staticmethod
@@ -403,7 +415,10 @@ class Converse(Expression):
         eval_arg_1 = self.arg_1.evaluate(assignment)
         eval_arg_2 = self.arg_2.evaluate(assignment)
         if eval_arg_1 is None or eval_arg_2 is None:
-            return None
+            if eval_arg_1 is True or eval_arg_2 is False:
+                return True
+            else:
+                return None
         return eval_arg_1 or not eval_arg_2
 
     @staticmethod

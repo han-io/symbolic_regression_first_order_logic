@@ -1,7 +1,7 @@
 import unittest
-from src.sr_fol.__main__ import best_expression
-from src.sr_fol.Expression import RandomExpression, Not, Or, And, Nand, Xor, Implies, Converse
-from src.sr_fol.Assignment import FormulaAssignment, RandomAssignment, Assignment
+from sr_fol.__main__ import best_expression
+from sr_fol.Expression import Var, Not, Or, And, Nand, Xor, Implies, Converse
+from sr_fol.Assignment import FormulaAssignment, RandomAssignment, Assignment
 
 
 class TestSrFol(unittest.TestCase):

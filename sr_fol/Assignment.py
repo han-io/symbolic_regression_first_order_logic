@@ -2,7 +2,7 @@ from itertools import product, combinations
 from pandas import DataFrame, concat
 from numpy.random import rand
 from numpy import ndarray
-from .Expression import Expression
+from sr_fol.Expression import Expression
 
 
 class Assignment:
