@@ -7,3 +7,4 @@ packages = ["pandas"]
 "./sr_fol/Population.py" = "./sr_fol/Population.py"
 "./sr_fol/__init__.py" = "./sr_fol/__init__.py"
 "./sr_fol/__main__.py" = "./sr_fol/__main__.py"
+"./_pyscript.py" = "./_pyscript.py"
