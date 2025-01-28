@@ -99,6 +99,11 @@
   <section id="output" class="container">
   </section>
 
-  <script type="py" src="_pyscript.py" config="./pyscript.toml"></script>
+  <!--<script type="py" src="_pyscript.py" config="./pyscript.toml"></script>-->
+  <script type="py" config="./pyscript.toml">
+    from sr_fol._pyscript import prepare_table_cell, prepare_table, find_expression, change_number
+    from pyscript import document
+    document.querySelector("#input-table").innerHTML = prepare_table()
+  </script>
 </body>
 </html>
