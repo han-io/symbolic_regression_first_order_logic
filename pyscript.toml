@@ -1,10 +1,3 @@
 name = "symbolic_regression_first_order_logic"
 description = "A simple application that implements symbolic regression for first-order logic."
-packages = ["pandas"]
-[files]
-"./sr_fol/Assignment.py" = "./sr_fol/Assignment.py"
-"./sr_fol/Expression.py" = "./sr_fol/Expression.py"
-"./sr_fol/Population.py" = "./sr_fol/Population.py"
-"./sr_fol/__init__.py" = "./sr_fol/__init__.py"
-"./sr_fol/__main__.py" = "./sr_fol/__main__.py"
-"./_pyscript.py" = "./_pyscript.py"
+packages = ["pandas", "./sr_fol-0.9.0-py3-none-any.whl"]
